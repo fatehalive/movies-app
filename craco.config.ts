@@ -13,8 +13,9 @@ module.exports = {
   webpack: {
     configure: (config: any, { env, paths }: { env: any, paths: any }) => {
         console.log(`> load_webpack_config`)
-        // overrides disini
+        // overrides konfigurasi webpack bawaan cra disini
 
+        // add alias
         config.resolve.alias = {
             ...config.resolve.alias,
             '@': path.resolve(__dirname, 'src')
