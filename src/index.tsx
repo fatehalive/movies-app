@@ -14,7 +14,7 @@ const root = createRoot(container);
 
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/movies-app">
       <Provider store={store}>
         <StyledEngineProvider injectFirst>
           <App />
