@@ -1,10 +1,10 @@
 const CACHE_NAME = "MoviesApp.v0.1.0";
 
 const STATIC_ASSETS = [
-    "/index.html",
-    "/manifest.json",
-    "/static/js/main.js",
-    "/static/css/main.css",
+    "/movies-app/index.html",
+    "/movies-app/manifest.json",
+    "/movies-app/static/js/main.js",
+    "/movies-app/static/css/main.css",
 ]
 
 function getDate() {
@@ -55,10 +55,10 @@ self.addEventListener('activate', event => {
 self.addEventListener('message', event => {
     console.log(`-> [${getDate()}] type: %cmessage\n`, "color:fuchsia;font-weight:bold", event.data)
 
-    if (event.data.eventType === 'customCountLoop') {
+    if (event.data.eventType === 'tesLoop') {
         for (var i = 0; i > event.data.data; ++i) {
+            event.source.postMessage(`loop ${i}`)
         }
-        event.source.postMessage(`loop ${i}`)
     }
 });
 
@@ -77,5 +77,5 @@ self.addEventListener('sync', event => {
 });
 
 self.addEventListener('push', event => {
-    console.log(`-> [${getDate()}] type: %cpush\n`, "color:fuchsia;font-weight:bold")
+    console.log(`-> [${getDate()}] type: %cpush\n`, "color:fuchsia;font-weight:bold", event)
 });
