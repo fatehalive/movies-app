@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '@/features/counter/counterSlice';
+import rootReducer from './rootReducer';
+import api from '@/api';
 
 export const store = configureStore({
-  reducer: {
-    counter: counterReducer,
+  reducer: rootReducer,
+  middleware(getDefaultMiddleware) {
+    return getDefaultMiddleware().concat(api.middleware)
   },
 });
 
