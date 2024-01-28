@@ -3,9 +3,11 @@ import {
   About,
   Home,
   TvShows,
+  TvShow,
   Movies,
   Movie,
   Peoples,
+  People,
   Profile,
   Search,
 } from "@/pages";
@@ -21,9 +23,9 @@ function App() {
         <Route path="/profile" Component={Profile}></Route>
         <Route path="/movie/:id" Component={Movie}></Route>
         <Route path="/movie" Component={Movies}></Route>
-        <Route path="/tv/:id" Component={TvShows}></Route>
+        <Route path="/tv/:id" Component={TvShow}></Route>
         <Route path="/tv" Component={TvShows}></Route>
-        <Route path="/person/:id" Component={Peoples}></Route>
+        <Route path="/person/:id" Component={People}></Route>
         <Route path="/person" Component={Peoples}></Route>
         <Route path="/about" Component={About}></Route>
       </Routes>
