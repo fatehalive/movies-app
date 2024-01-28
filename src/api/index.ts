@@ -1,6 +1,7 @@
 import { createApi /*fetchBaseQuery*/ } from "@reduxjs/toolkit/query/react";
 import axiosInstance from "./axiosInstance";
 import searchEndpoints from "./search";
+import movieEndpoints from "./movie";
 
 type AxiosBaseQueryProps = {
   baseUrl?: string;
@@ -41,6 +42,7 @@ const api = createApi({
   baseQuery: axiosBaseQuery({ baseUrl: "/3" }),
   endpoints: (builder) => ({
     ...searchEndpoints(builder),
+    ...movieEndpoints(builder)
   }),
 });
 
@@ -52,5 +54,6 @@ export const {
   useSearchMultiQuery,
   useSearchPersonQuery,
   useSearchTvQuery,
+  useMovieDetailQuery
 } = api;
 export default api;

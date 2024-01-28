@@ -34,7 +34,7 @@ export const Header = () => {
   const handleClickCloseNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     const el = event.target as HTMLElement;
     const route = el.getAttribute("data-id");
-    navigate(`/${route}`);
+    if (route) navigate(`/${route}`);
     setAnchorElNav(null);
   };
   const handleClickOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
@@ -45,11 +45,18 @@ export const Header = () => {
     const { innerText } = event.target as HTMLElement;
 
     switch (innerText) {
+      case "Login":
+        // Todo
+        break;
       case "About":
         navigate("/about");
         break;
       default:
-        navigate("/profile");
+        navigate("/profile", { 
+          state: { 
+            tab: settings.indexOf(innerText)
+          } 
+        });
         break;
     }
     setAnchorElUser(null);
