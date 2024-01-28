@@ -5,7 +5,7 @@ export const People: React.FC = () => {
   return (
     <Paper component={"section"} sx={{ border: "1px solid black" }}>
       <Container maxWidth="md">
-        <h2>Peoples</h2>
+        <h2>Person Detail</h2>
         <Box>Card List of People</Box>
       </Container>
     </Paper>

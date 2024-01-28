@@ -9,22 +9,31 @@ import {
   IconButton,
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
-import { useOnlineStatus } from "@/hooks";
-
+import { useAppDispatch, useOnlineStatus } from "@/hooks";
+import api from "@/api";
+import { setSearch } from "@/store/slices/search";
 
 export const Home: React.FC = () => {
   const id = useId();
   const navigate = useNavigate();
-  const online = useOnlineStatus()
+  const dispatch = useAppDispatch();
+  const online = useOnlineStatus();
 
   const handleOnSubmitForm = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // const searchTerm = event.currentTarget.elements["query"].value;
     const form = event.currentTarget;
-    const searchInput = form.elements.namedItem("query") as HTMLInputElement;
-    const querySearch = { query: searchInput.value }
-    navigate(`/search?query=${searchInput.value}`, {
-      state: querySearch,
+    const searchEl = form.elements.namedItem("query") as HTMLInputElement;
+    const querySearch = searchEl.value
+
+    querySearch.replace(/^\s+|\s+$/gm,'') // trimming
+
+    const params = { query: querySearch, page: 1 };
+    
+    dispatch(api.endpoints.searchMulti.initiate(params)).then((result) => {
+      const { isSuccess, data } = result;
+      dispatch(setSearch(data))
+      if (isSuccess) navigate(`/search?query=${querySearch.replace(/\s/g, '+')}`);
     });
   };
 

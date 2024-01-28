@@ -1,5 +1,5 @@
-import { MouseEvent } from "react";
-import { useNavigate } from "react-router";
+import { MouseEvent, SyntheticEvent, useCallback } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
   Card,
@@ -11,68 +11,56 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import { Favorite, BookmarkAdd, Visibility } from "@mui/icons-material";
+import { BookmarkAdd, Visibility, Delete } from "@mui/icons-material";
+import { useAppDispatch } from "@/hooks";
+import { addWatchList, markAsWatched, removeAsWatched, saveToDB } from "@/store/slices/user";
+// import { GENRE } from "@/libs/helpers/constants";
 
-const GENRE = {
-  12: "Adventure",
-  14: "Fantasy",
-  16: "Animation",
-  18: "Drama",
-  28: "Action",
-  35: "Comedy",
-  36: "History",
-  37: "Western",
-  53: "Thriller",
-  80: "Crime",
-  99: "Documentary",
-  878: "Science Fiction",
-  9648: "Mystery",
-  10402: "Music",
-  10749: "Romance",
-  10751: "Family",
-  10752: "War",
-  10770: "War",
-};
-
-export const MovieCard = ({ movie, key }: { key: number; movie: any }) => {
+export const MovieCard = ({ movie }: { movie: any, for?: string }) => {
   const {
     title,
     first_air_date,
+    release_date,
     poster_path,
     vote_average,
     media_type,
-    genre_ids,
+    // genre_ids,
     overview,
   } = movie;
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { pathname } = useLocation();
+
+  const handleClickMarkWatched = useCallback((e: SyntheticEvent) => {
+    dispatch(markAsWatched(movie));
+    dispatch(saveToDB({ dbName: "watched", storeName: "test", movie }));
+  }, [dispatch, movie]);
+
+  const handleClickAddWatchList = useCallback((e: SyntheticEvent) => {
+    dispatch(addWatchList(movie));
+    dispatch(saveToDB({ dbName: "watch_list", storeName: "test", movie }));
+  }, [dispatch, movie]);
 
   const handleClickCard = (event: MouseEvent<HTMLElement>) => {
     const id = event.currentTarget.getAttribute("data-id");
-    const name = event.currentTarget.getAttribute("data-name");
-    name?.toLowerCase().split(" ").join("-");
-    switch (media_type) {
-      case "tv":
-        navigate(`/tv/${id}`);
-        break;
-      case "person":
-        navigate(`/person/${id}`);
-        break;
-      case "movie":
-        navigate(`/movie/${id}`);
-        break;
-    }
+    // const name = event.currentTarget.getAttribute("data-name");
+    // name?.toLowerCase().split(" ").join("-");
+    navigate(`/${media_type}/${id}`, { state: { id: id } });
   };
+
+  const handleClickDelete = useCallback((arg: SyntheticEvent) => {
+    dispatch(removeAsWatched(movie.id))
+  }, [dispatch, movie])
 
   return (
     <Grid item md={4}>
       <Card
-        key={key}
+        key={movie.id}
         data-id={movie.id}
         data-name={movie.name}
-        onClick={handleClickCard}
         sx={{ borderRadius: 7 }}
       >
-        <CardActionArea>
+        <CardActionArea data-id={movie.id} onClick={handleClickCard}>
           <CardMedia
             component="img"
             height="400"
@@ -86,7 +74,7 @@ export const MovieCard = ({ movie, key }: { key: number; movie: any }) => {
             </Typography>
 
             <Typography variant="body1" color="textSecondary">
-              Release Date: {first_air_date}
+              Release Date: {release_date || first_air_date}
             </Typography>
 
             {/* <Typography variant="body1" color="textSecondary">
@@ -108,35 +96,26 @@ export const MovieCard = ({ movie, key }: { key: number; movie: any }) => {
           </CardContent>
         </CardActionArea>
         <CardActions disableSpacing>
-          <Box display={"flex"} width={"100%"}>
-            <Box
-              flexBasis={"33.33%"}
-              display={"flex"}
-              justifyContent={"center"}
-            >
-              <IconButton>
-                <Favorite />
+          {pathname.includes("profile") ? (
+            <Box display={"flex"} width={"100%"} justifyContent={"center"}>
+              <IconButton data-id={"Delete"} onClick={handleClickDelete}>
+                <Delete />
               </IconButton>
             </Box>
-            <Box
-              flexBasis={"33.33%"}
-              display={"flex"}
-              justifyContent={"center"}
-            >
-              <IconButton>
-                <Visibility />
-              </IconButton>
+          ) : (
+            <Box display={"flex"} width={"100%"}>
+              <Box flexBasis={"50%"} display={"flex"} justifyContent={"center"}>
+                <IconButton onClick={handleClickMarkWatched}>
+                  <Visibility />
+                </IconButton>
+              </Box>
+              <Box flexBasis={"50%"} display={"flex"} justifyContent={"center"}>
+                <IconButton onClick={handleClickAddWatchList}>
+                  <BookmarkAdd />
+                </IconButton>
+              </Box>
             </Box>
-            <Box
-              flexBasis={"33.33%"}
-              display={"flex"}
-              justifyContent={"center"}
-            >
-              <IconButton>
-                <BookmarkAdd />
-              </IconButton>
-            </Box>
-          </Box>
+          )}
         </CardActions>
       </Card>
     </Grid>
