@@ -64,13 +64,19 @@ self.addEventListener('message', event => {
 
 /* ---------- SW FUNCTIONAL EVENTS ---------- */
 self.addEventListener('fetch', event => {
-    console.log(`-> [${getDate()}] type: %cfetch\n`, "color:fuchsia;font-weight:bold", event.request.url)
+    console.log(`-> [${getDate()}] type: %cfetch\n`, "color:fuchsia;font-weight:bold", event.request.url);
 
+    const baseUrl = self.location.href;
+    const base = baseUrl.substring(0, baseUrl.lastIndexOf("/") + 1);
+
+    const modifiedRequest = new Request(base + event.request.url.substring(baseUrl.length));
+    
     event.respondWith(
-        caches.match(event.request)
-            .then(response => response || fetch(event.request))
+        caches.match(modifiedRequest)
+            .then(response => response || fetch(modifiedRequest))
     );
 });
+
 
 self.addEventListener('sync', event => {
     console.log(`-> [${getDate()}] type: %csync\n`, "color:fuchsia;font-weight:bold")
