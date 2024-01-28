@@ -64,17 +64,30 @@ self.addEventListener('message', event => {
 
 /* ---------- SW FUNCTIONAL EVENTS ---------- */
 self.addEventListener('fetch', event => {
-    console.log(`-> [${getDate()}] type: %cfetch\n`, "color:fuchsia;font-weight:bold", event.request.url);
-
-    const baseUrl = self.location.href;
-    const base = baseUrl.substring(0, baseUrl.lastIndexOf("/") + 1);
-
-    const modifiedRequest = new Request(base + event.request.url.substring(baseUrl.length));
+    self.addEventListener('fetch', event => {
+        console.log(`-> [${getDate()}] type: %cfetch\n`, "color:fuchsia;font-weight:bold", event.request.url);
     
-    event.respondWith(
-        caches.match(modifiedRequest)
-            .then(response => response || fetch(modifiedRequest))
-    );
+        const baseUrl = self.location.href;
+        const base = baseUrl.substring(0, baseUrl.lastIndexOf("/") + 1);
+    
+        let modifiedUrl;
+    
+        // Jika permintaan adalah untuk file yang ada dalam daftar STATIC_ASSETS
+        if (STATIC_ASSETS.includes(event.request.url.replace(base, ''))) {
+            modifiedUrl = event.request.url;
+        } else {
+            // Jika permintaan adalah untuk file lain, modifikasi URL
+            modifiedUrl = base + event.request.url.substring(baseUrl.length);
+        }
+    
+        const modifiedRequest = new Request(modifiedUrl);
+        
+        event.respondWith(
+            caches.match(modifiedRequest)
+                .then(response => response || fetch(modifiedRequest))
+        );
+    });
+    
 });
 
 
